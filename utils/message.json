@@ -9,5 +9,13 @@
     },
     "version":{
         "success":"Server running successfully."
+    },
+    "get-user":{
+        "success":"User found.",
+        "invalid":"No user found."
+    },
+    "check-auth":{
+        "success":"Session valid.",
+        "invalid":"Session invalid."
     }
 }

@@ -41,6 +41,33 @@ class AuthenticationController {
             ErrorHandler.sendError(res, error)
         }
     }
+
+    /**
+     * API | POST
+     * Login the registered user and send authentication token
+     * @example {
+     *      email: String,
+     *      password: String
+     * }
+     * @param {*} req
+     * @param {*} res
+     */
+    static async login (req, res) {
+        try {
+            let email = req.body.email
+            let password = req.body.password
+            // Login work here
+            var loginSuccesss = 1 // login successful or unsuccessful
+            if (loginSuccesss) {
+                const token = '12345678' // Token from middleware here
+                return new Response(res, { token: token }, message.login.success, true)
+            } else {
+                return new Response(res, { token: '' }, message.login.invalid, false)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
 }
 
 module.exports = { AuthenticationController }
