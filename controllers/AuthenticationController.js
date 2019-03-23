@@ -97,7 +97,7 @@ class AuthenticationController {
             ErrorHandler.sendError(res, error)
         }
     }
-    
+
     /**
      * API | GET
      * Get user profile against the token.
