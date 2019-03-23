@@ -86,10 +86,9 @@ class AuthenticationController {
     static async checkLogin (req, res) {
         try {
             let token = req.query.token
-            let decodedToken = AuthMiddleware.decodeJWT(token)
-            let user = await User.findOne({ _id: decodedToken.sub, token: token })
+            let user = await User.findOne({ token: token })
             if (user == null) {
-                return new Response(res, { authenticated: false }, message.checkLogin.invalid, 401)
+                return new Response(res, { authenticated: false }, message.checkLogin.invalid, false, 401)
             } else {
                 return new Response(res, { authenticated: true }, message.checkLogin.success)
             }
@@ -110,9 +109,9 @@ class AuthenticationController {
     static async getProfile (req, res) {
         try {
             let token = req.query.token
-            let user = await User.findOne({ _id: AuthMiddleware.decodeJWT(token), token: token })
+            let user = await User.findOne({ token: token })
             if (user == null) {
-                return new Response(res, { user: {} }, message.getProfile.invalid, 401)
+                return new Response(res, { user: {} }, message.getProfile.invalid, false, 401)
             } else {
                 return new Response(res, { user }, message.getProfile.success)
             }
