@@ -86,7 +86,7 @@ class AuthenticationController {
     static async checkLogin (req, res) {
         try {
             let token = req.query.token
-            let user = await User.findOne({ token: token })
+            let user = await User.findOne({ authToken: token })
             if (user == null) {
                 return new Response(res, { authenticated: false }, message.checkLogin.invalid, false, 401)
             } else {
@@ -109,7 +109,7 @@ class AuthenticationController {
     static async getProfile (req, res) {
         try {
             let token = req.query.token
-            let user = await User.findOne({ token: token })
+            let user = await User.findOne({ authToken: token })
             if (user == null) {
                 return new Response(res, { user: {} }, message.getProfile.invalid, false, 401)
             } else {
