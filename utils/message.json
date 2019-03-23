@@ -12,11 +12,11 @@
     "version":{
         "success":"Server running successfully."
     },
-    "get-user":{
+    "getProfile":{
         "success":"User found.",
         "invalid":"No user found."
     },
-    "check-auth":{
+    "checkLogin":{
         "success":"Session valid.",
         "invalid":"Session invalid."
     }

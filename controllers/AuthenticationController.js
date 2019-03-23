@@ -23,20 +23,21 @@ class AuthenticationController {
     static async signup (req, res) {
         try {
             let email = req.body.email
-            let password = req.body.password
-            let firstName = req.body.firstName
-            let lastName = req.body.lastName
-            password = bcrypt.hashSync(password, 8)
-            const user = new User({
-                email: email,
-                password: password,
-                firstName: firstName,
-                lastName: lastName
-            })
-            await user.save()
-            const token = AuthMiddleware.createJWT(user)
-            await User.findOneAndUpdate({ _id: user._id }, { $set: { authToken: token } })
-            return new Response(res, { token: token }, message.signup.success)
+            let checkUser = await User.findOne({ email: email })
+            if (checkUser) {
+                return new Response(res, { token: '' }, message.signup.invalidEmail, false, 400)
+            } else {
+                const user = new User({
+                    email: email,
+                    password: bcrypt.hashSync(req.body.password, 8),
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName
+                })
+                await user.save()
+                const token = AuthMiddleware.createJWT(user)
+                await User.findOneAndUpdate({ _id: user._id }, { $set: { authToken: token } })
+                return new Response(res, { token: token }, message.signup.success, true)
+            }
         } catch (error) {
             ErrorHandler.sendError(res, error)
         }
@@ -56,15 +57,64 @@ class AuthenticationController {
         try {
             let email = req.body.email
             let password = req.body.password
-            // Login work here
-            var loginSuccesss = 1 // login successful or unsuccessful
-            if (loginSuccesss) {
-                const token = '12345678' // Token from middleware here
-                return new Response(res, { token: token }, message.login.success, true)
-            } else if (loginSuccesss) {
-                return new Response(res, { token: '' }, message.login.invalidEmail, false)
+            let checkUser = await User.findOne({ email: email })
+            if (!checkUser) {
+                return new Response(res, { token: '' }, message.login.invalidEmail, false, 400)
             } else {
-                return new Response(res, { token: '' }, message.login.invalidPassword, false)
+                if (!bcrypt.compareSync(password, checkUser.password)) {
+                    return new Response(res, { token: '' }, message.login.invalidPassword, false, 400)
+                } else {
+                    let token = AuthMiddleware.createJWT(checkUser)
+                    await User.findOneAndUpdate({ email: email }, { $set: { authToken: token } })
+                    return new Response(res, { token: token }, message.login.success, true)
+                }
+            }
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
+
+    /**
+     * API | GET
+     * Check if the authentication token is still valid.
+     * @example {
+        *      token: String
+        * }
+        * @param {*} req
+        * @param {*} res
+        */
+    static async checkLogin (req, res) {
+        try {
+            let token = req.query.token
+            let decodedToken = AuthMiddleware.decodeJWT(token)
+            let user = await User.findOne({ _id: decodedToken.sub, token: token })
+            if (user == null) {
+                return new Response(res, { authenticated: false }, message.checkLogin.invalid, 401)
+            } else {
+                return new Response(res, { authenticated: true }, message.checkLogin.success)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
+    
+    /**
+     * API | GET
+     * Get user profile against the token.
+     * @example {
+        *      token: String
+        * }
+        * @param {*} req
+        * @param {*} res
+        */
+    static async getProfile (req, res) {
+        try {
+            let token = req.query.token
+            let user = await User.findOne({ _id: AuthMiddleware.decodeJWT(token), token: token })
+            if (user == null) {
+                return new Response(res, { user: {} }, message.getProfile.invalid, 401)
+            } else {
+                return new Response(res, { user }, message.getProfile.success)
             }
         } catch (error) {
             ErrorHandler.sendError(res, error)
