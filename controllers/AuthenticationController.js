@@ -4,7 +4,8 @@ const { User } = require('./../schema/user')
 const { Response } = require('./../utils/Response')
 const { ErrorHandler } = require('./../utils/ErrorHandler')
 const { AuthMiddleware } = require('./../middleware/AuthMiddleware')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
+const message = require('./../utils/message')
 
 class AuthenticationController {
     /**
@@ -35,7 +36,7 @@ class AuthenticationController {
             await user.save()
             const token = AuthMiddleware.createJWT(user)
             await User.findOneAndUpdate({ _id: user._id }, { $set: { authToken: token } })
-            return new Response(res, { token: token }, 'Signup successful')
+            return new Response(res, { token: token }, message.signup.success)
         } catch (error) {
             ErrorHandler.sendError(res, error)
         }

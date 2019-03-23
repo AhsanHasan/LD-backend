@@ -1,0 +1,13 @@
+{
+    "login":{
+        "success":"Login Successful.",
+        "invalid":"The email or password seems to be invalid, please try again."
+    },
+    "signup":{
+        "success":"Signup successful.",
+        "invalid":"Seems like some of the details are missing, please verify and try again."
+    },
+    "version":{
+        "success":"Server running successfully."
+    }
+}
