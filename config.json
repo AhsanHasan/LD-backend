@@ -1,0 +1,12 @@
+{
+    "PORT": 3000,
+    "MONGO_CONNECTION": "mongodb://root:root@127.0.0.1:27017/ldp",
+    "SSH_TUNNEL": {
+        "username": "root",
+        "host": "178.62.7.177",
+        "port": 22,
+        "password": "msLq87JteDVeT;6at/eV2ou",
+        "dstPort": 27017
+    },
+    "TOKEN_SECRET": "asdhfiouqwer23$234"
+}
