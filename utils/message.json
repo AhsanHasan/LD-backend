@@ -1,10 +1,12 @@
 {
     "login":{
         "success":"Login Successful.",
-        "invalid":"The email or password seems to be invalid, please try again."
+        "invalidEmail":"Sorry! No user exists against this email.",
+        "invalidPassword":"The password seems to be invalid, please try again."
     },
     "signup":{
         "success":"Signup successful.",
+        "invalidEmail":"This email seems to be already registered, please try another email.",
         "invalid":"Seems like some of the details are missing, please verify and try again."
     },
     "version":{

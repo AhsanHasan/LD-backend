@@ -61,8 +61,10 @@ class AuthenticationController {
             if (loginSuccesss) {
                 const token = '12345678' // Token from middleware here
                 return new Response(res, { token: token }, message.login.success, true)
+            } else if (loginSuccesss) {
+                return new Response(res, { token: '' }, message.login.invalidEmail, false)
             } else {
-                return new Response(res, { token: '' }, message.login.invalid, false)
+                return new Response(res, { token: '' }, message.login.invalidPassword, false)
             }
         } catch (error) {
             ErrorHandler.sendError(res, error)
