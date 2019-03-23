@@ -113,7 +113,7 @@ class AuthenticationController {
             if (user == null) {
                 return new Response(res, { user: {} }, message.getProfile.invalid, false, 401)
             } else {
-                return new Response(res, { user }, message.getProfile.success)
+                return new Response(res, { user: { email: user.email, firstName: user.firstName, lastName: user.lastName } }, message.getProfile.success)
             }
         } catch (error) {
             ErrorHandler.sendError(res, error)
