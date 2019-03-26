@@ -32,7 +32,7 @@
     "jwt-simple": "^0.5.5",
     "linqjs": "^1.0.1",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.19",
+    "mongoose": "^5.4.20",
     "node-rest-client": "^3.1.0",
     "p-iteration": "^1.1.8",
     "request": "^2.88.0",
