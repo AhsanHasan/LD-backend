@@ -11,6 +11,6 @@ let crimeSchema = new mongoose.Schema({
 {
     timestamps: true
 })
-
+crimeSchema.index({ crimeId: 1 }, { unique: true })
 let Crime = mongoose.model('Crime', crimeSchema)
 module.exports = { Crime }
