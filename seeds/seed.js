@@ -9,7 +9,7 @@ class Seed {
     async seed () {
         await mongoose.connect()
         console.log('connected')
-        await PropertySeeder.seed()
+        // await PropertySeeder.seed()
         await CrimeSeeder.seed()
         console.log('Database seed completed')
         process.exit()
