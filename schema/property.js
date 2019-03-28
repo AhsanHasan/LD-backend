@@ -10,7 +10,8 @@ let propertySchema = new mongoose.Schema({
     longitude: Number,
     price: Number,
     property_type: String,
-    title: String
+    title: String,
+    postCode: String
 },
 {
     timestamps: true

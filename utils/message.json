@@ -19,5 +19,21 @@
     "checkLogin":{
         "success":"Session valid.",
         "invalid":"Session invalid."
+    },
+    "getPropertyTypes":{
+        "success":"Property types found.",
+        "invalid":"No property types found."
+    },
+    "getCrimeCategories":{
+        "success":"Crime categories found.",
+        "invalid":"No crime categories found."
+    },
+    "getCrimeMonths":{
+        "success":"Crime months found.",
+        "invalid":"No crime months found."
+    },
+    "getAllCrimes":{
+        "success":"Records found.",
+        "invalid":"No Records found."
     }
 }

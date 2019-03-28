@@ -6,7 +6,8 @@ let crimeSchema = new mongoose.Schema({
     latitude: Number,
     longitude: Number,
     month: String,
-    crimeId: Number
+    crimeId: Number,
+    postCode: String
 },
 {
     timestamps: true
