@@ -11,7 +11,6 @@ class CrimeSeeder {
         let dates = ['2017-01', '2017-02', '2017-03', '2017-04', '2017-05', '2017-06', '2017-07', '2017-08', '2017-09', '2017-10', '2017-11', '2017-12', '2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09', '2018-10', '2018-11', '2018-12', '2019-01']
         try {
             let properties = await Property.find({}, 'latitude longitude')
-            // await forEach(properties, async (element) =>
             for (let j = 0; j < properties.length; j++) {
                 let crimeArray = []
                 for (let i = 0; i < dates.length; i++) {
@@ -20,20 +19,39 @@ class CrimeSeeder {
                         properties[i].latitude + '&lng=' + properties[i].longitude + '&date=' + dates[i],
                         json: true
                     }
-                    // console.log(option.uri)
                     await rp(option)
                         .then(function (repos) {
                             repos.forEach(async (element) => {
                                 let checkEntry = await Crime.findOne({ crimeId: element.id })
                                 if (!checkEntry) {
-                                    let crime = {
-                                        category: element.category,
-                                        latitude: element.location.latitude,
-                                        longitude: element.location.longitude,
-                                        month: element.month,
-                                        crimeId: element.id
+                                    let postCodeCheck = {
+                                        url: 'https://api.postcodes.io/outcodes?lon=' + element.location.longitude + '&lat=' + element.location.latitude,
+                                        json: true
                                     }
-                                    crimeArray.push(crime)
+                                    await rp(postCodeCheck)
+                                        .then(function (postal) {
+                                            let crime = {
+                                                category: element.category,
+                                                latitude: element.location.latitude,
+                                                longitude: element.location.longitude,
+                                                month: element.month,
+                                                crimeId: element.id,
+                                                postCode: postal.result[0].outcode
+                                            }
+                                            crimeArray.push(crime)
+                                        })
+                                        .catch(function (err) {
+                                            console.log(err)
+                                            let crime = {
+                                                category: element.category,
+                                                latitude: element.location.latitude,
+                                                longitude: element.location.longitude,
+                                                month: element.month,
+                                                crimeId: element.id,
+                                                postCode: ''
+                                            }
+                                            crimeArray.push(crime)
+                                        })
                                 }
                             })
                         })
