@@ -18,6 +18,7 @@ router.get('/get-property-types', PropertyController.getPropertyTypes)
 // Crime API
 router.get('/get-crime-categories', CrimeController.getCrimeCategories)
 router.get('/get-crime-months', CrimeController.getCrimeMonths)
+router.get('/get-crime-postcodes', CrimeController.getCrimePostCodes)
 router.get('/get-all-crimes', CrimeController.getAllCrimes)
 
 module.exports = router

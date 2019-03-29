@@ -50,10 +50,32 @@ class CrimeController {
 
     /**
      * API | GET
-     * Get all the Crime of records against a catagory / month / both / none.
+     * Get all postCodes of crimes.
+     * @example {
+        * }
+        * @param {*} req
+        * @param {*} res
+        */
+    static async getCrimePostCodes (req, res) {
+        try {
+            let months = await Crime.distinct('postCode')
+            if (months) {
+                return new Response(res, { months: months }, message.getCrimePostCodes.success, true)
+            } else {
+                return new Response(res, { months: [] }, message.getCrimePostCodes.invalid, false, 400)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
+
+    /**
+     * API | GET
+     * Get all the Crime of records against a catagory / month / postcode / any combination / none.
      * @example {
         *      category: String,
-        *      month: String
+        *      month: String,
+        *      postCode: String
         * }
         * @param {*} req
         * @param {*} res
@@ -62,12 +84,20 @@ class CrimeController {
         try {
             let results = []
             let query = 'category longitude latitude month'
-            if (req.query.category && !req.query.month) {
+            if (req.query.category && !req.query.month && !req.query.postCode) {
                 results = await Crime.find({ 'category': req.query.category }, query)
-            } else if (!req.query.category && req.query.month) {
+            } else if (!req.query.category && req.query.month && !req.query.postCode) {
                 results = await Crime.find({ 'month': req.query.month }, query)
-            } else if (req.query.category && req.query.month) {
+            } else if (req.query.category && req.query.month && !req.query.postCode) {
                 results = await Crime.find({ 'month': req.query.month, 'category': req.query.category }, query)
+            } else if (req.query.category && req.query.month && req.query.postCode) {
+                results = await Crime.find({ 'month': req.query.month, 'category': req.query.category, 'postCode': req.query.postCode }, query)
+            } else if (!req.query.category && req.query.month && req.query.postCode) {
+                results = await Crime.find({ 'month': req.query.month, 'postCode': req.query.postCode }, query)
+            } else if (req.query.category && !req.query.month && req.query.postCode) {
+                results = await Crime.find({ 'category': req.query.category, 'postCode': req.query.postCode }, query)
+            } else if (!req.query.category && !req.query.month && req.query.postCode) {
+                results = await Crime.find({ 'postCode': req.query.postCode }, query)
             } else {
                 results = await Crime.find({}, query)
             }

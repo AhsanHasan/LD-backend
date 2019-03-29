@@ -32,6 +32,10 @@
         "success":"Crime months found.",
         "invalid":"No crime months found."
     },
+    "getCrimePostCodes":{
+        "success":"Crime postcodes found.",
+        "invalid":"No crime postcodes found."
+    },
     "getAllCrimes":{
         "success":"Records found.",
         "invalid":"No Records found."
