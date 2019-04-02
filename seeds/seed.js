@@ -11,6 +11,9 @@ class Seed {
         console.log('connected')
         // await PropertySeeder.seed()
         // await CrimeSeeder.seed()
+        await CrimeSeeder.getPostcodes()
+        await PropertySeeder.getBorough()
+        await CrimeSeeder.getBorough()
         console.log('Database seed completed')
         process.exit()
     }

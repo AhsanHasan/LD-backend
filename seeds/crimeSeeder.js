@@ -11,12 +11,13 @@ class CrimeSeeder {
         let dates = ['2017-01', '2017-02', '2017-03', '2017-04', '2017-05', '2017-06', '2017-07', '2017-08', '2017-09', '2017-10', '2017-11', '2017-12', '2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09', '2018-10', '2018-11', '2018-12', '2019-01']
         try {
             let properties = await Property.find({}, 'latitude longitude')
+            let crimeArray = []
             for (let j = 0; j < properties.length; j++) {
-                let crimeArray = []
+                crimeArray = []
                 for (let i = 0; i < dates.length; i++) {
                     let option = {
                         uri: 'https://data.police.uk/api/crimes-street/all-crime?lat=' +
-                        properties[i].latitude + '&lng=' + properties[i].longitude + '&date=' + dates[i],
+                            properties[i].latitude + '&lng=' + properties[i].longitude + '&date=' + dates[i],
                         json: true
                     }
                     await rp(option)
@@ -24,34 +25,14 @@ class CrimeSeeder {
                             repos.forEach(async (element) => {
                                 let checkEntry = await Crime.findOne({ crimeId: element.id })
                                 if (!checkEntry) {
-                                    let postCodeCheck = {
-                                        url: 'https://api.postcodes.io/outcodes?lon=' + element.location.longitude + '&lat=' + element.location.latitude,
-                                        json: true
+                                    let crime = {
+                                        category: element.category,
+                                        latitude: element.location.latitude,
+                                        longitude: element.location.longitude,
+                                        month: element.month,
+                                        crimeId: element.id
                                     }
-                                    await rp(postCodeCheck)
-                                        .then(function (postal) {
-                                            let crime = {
-                                                category: element.category,
-                                                latitude: element.location.latitude,
-                                                longitude: element.location.longitude,
-                                                month: element.month,
-                                                crimeId: element.id,
-                                                postCode: postal.result[0].outcode
-                                            }
-                                            crimeArray.push(crime)
-                                        })
-                                        .catch(function (err) {
-                                            console.log(err)
-                                            let crime = {
-                                                category: element.category,
-                                                latitude: element.location.latitude,
-                                                longitude: element.location.longitude,
-                                                month: element.month,
-                                                crimeId: element.id,
-                                                postCode: ''
-                                            }
-                                            crimeArray.push(crime)
-                                        })
+                                    crimeArray.push(crime)
                                 }
                             })
                         })
@@ -60,6 +41,62 @@ class CrimeSeeder {
                         })
                 }
                 await Crime.insertMany(crimeArray)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(error)
+        }
+    }
+
+    /**
+     * Insert postCodes in crime collection from the api
+     */
+    static async getPostcodes () {
+        try {
+            let crimes = await Crime.find({ 'postCode': '' })
+            let dataLength = crimes.length
+            console.log(dataLength)
+            for (let x = 0; x < crimes.length; x++) {
+                let postCodeCheck = {
+                    uri: 'https://api.postcodes.io/outcodes?lon=' + crimes[x].longitude + '&lat=' + crimes[x].latitude,
+                    json: true,
+                    method: 'GET'
+                }
+                await rp(postCodeCheck)
+                    .then(async (repos) => {
+                        console.log('Crime Postcode: ' + ((x + 1) / dataLength) * 100)
+                        await Crime.findOneAndUpdate({ crimeId: crimes[x].crimeId }, { $set: { postCode: repos.result[0].outcode } })
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                    })
+            }
+        } catch (error) {
+            ErrorHandler.sendError(error)
+        }
+    }
+
+    /**
+     * Insert borough in crime collection from the api
+     */
+    static async getBorough () {
+        try {
+            let crimes = await Crime.find({})
+            let dataLength = crimes.length
+            console.log(dataLength)
+            for (let x = 0; x < crimes.length; x++) {
+                let postCodeCheck = {
+                    uri: 'https://api.postcodes.io/outcodes?lon=' + crimes[x].longitude + '&lat=' + crimes[x].latitude,
+                    json: true,
+                    method: 'GET'
+                }
+                await rp(postCodeCheck)
+                    .then(async (repos) => {
+                        console.log('Crime Borough: ' + ((x + 1) / dataLength) * 100)
+                        await Crime.findOneAndUpdate({ crimeId: crimes[x].crimeId }, { $set: { borough: repos.result[0].admin_district[0] } })
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                    })
             }
         } catch (error) {
             ErrorHandler.sendError(error)

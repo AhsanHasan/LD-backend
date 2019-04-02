@@ -11,7 +11,8 @@ let propertySchema = new mongoose.Schema({
     price: Number,
     property_type: String,
     title: String,
-    postCode: String
+    postCode: String,
+    borough: String
 },
 {
     timestamps: true

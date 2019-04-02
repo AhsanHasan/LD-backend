@@ -38,7 +38,8 @@ class PropertySeeder {
                                         price: element.price,
                                         property_type: element.property_type,
                                         title: element.title,
-                                        postCode: postal.result[0].outcode
+                                        postCode: postal.result[0].outcode,
+                                        borough: postal.result[0].admin_district[0]
                                     }
                                     propertyArray.push(property)
                                 })
@@ -54,7 +55,8 @@ class PropertySeeder {
                                         price: element.price,
                                         property_type: element.property_type,
                                         title: element.title,
-                                        postCode: ''
+                                        postCode: '',
+                                        borough: ''
                                     }
                                     propertyArray.push(property)
                                 })
@@ -64,6 +66,34 @@ class PropertySeeder {
                         console.log(err)
                     })
                 await Property.insertMany(propertyArray)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(error)
+        }
+    }
+
+    /**
+     * Insert borough in properties collection from the api
+     */
+    static async getBorough () {
+        try {
+            let properties = await Property.find({})
+            let dataLength = properties.length
+            console.log(dataLength)
+            for (let x = 0; x < properties.length; x++) {
+                let postCodeCheck = {
+                    uri: 'https://api.postcodes.io/outcodes?lon=' + properties[x].longitude + '&lat=' + properties[x].latitude,
+                    json: true,
+                    method: 'GET'
+                }
+                await rp(postCodeCheck)
+                    .then(async (repos) => {
+                        console.log('Properties Borough: ' + ((x + 1) / dataLength) * 100)
+                        await Property.findOneAndUpdate({ _id: properties[x]._id }, { $set: { borough: repos.result[0].admin_district[0] } })
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                    })
             }
         } catch (error) {
             ErrorHandler.sendError(error)
