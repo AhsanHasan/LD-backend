@@ -48,13 +48,14 @@ class CrimeSeeder {
     }
 
     /**
-     * Insert postCodes in crime collection from the api
+     * Insert postCodes and borough in crime collection from the api
      */
-    static async getPostcodes () {
+    static async getPostcodesBorough () {
         try {
-            let crimes = await Crime.find({ 'postCode': '' })
+            console.log('Starting postcode for crime.')
+            let crimes = await Crime.find({})
             let dataLength = crimes.length
-            console.log(dataLength)
+            console.log('Starting postcode for crime for the data of ' + dataLength + ' entries.')
             for (let x = 0; x < crimes.length; x++) {
                 let postCodeCheck = {
                     uri: 'https://api.postcodes.io/outcodes?lon=' + crimes[x].longitude + '&lat=' + crimes[x].latitude,
@@ -63,8 +64,8 @@ class CrimeSeeder {
                 }
                 await rp(postCodeCheck)
                     .then(async (repos) => {
-                        console.log('Crime Postcode: ' + ((x + 1) / dataLength) * 100)
-                        await Crime.findOneAndUpdate({ crimeId: crimes[x].crimeId }, { $set: { postCode: repos.result[0].outcode } })
+                        console.log('Crime Postcode & Borough: ' + ((x + 1) / dataLength) * 100)
+                        await Crime.findOneAndUpdate({ crimeId: crimes[x].crimeId }, { $set: { postCode: repos.result[0].outcode, borough: repos.result[0].admin_district[0] } })
                     })
                     .catch(function (err) {
                         console.log(err)
@@ -80,9 +81,10 @@ class CrimeSeeder {
      */
     static async getBorough () {
         try {
-            let crimes = await Crime.find({})
+            console.log('Starting borough for crime.')
+            let crimes = await Crime.find({ 'borough': { $exists: false } })
             let dataLength = crimes.length
-            console.log(dataLength)
+            console.log('Starting borough for crime for the data of ' + dataLength + ' entries.')
             for (let x = 0; x < crimes.length; x++) {
                 let postCodeCheck = {
                     uri: 'https://api.postcodes.io/outcodes?lon=' + crimes[x].longitude + '&lat=' + crimes[x].latitude,

@@ -77,9 +77,10 @@ class PropertySeeder {
      */
     static async getBorough () {
         try {
-            let properties = await Property.find({})
+            console.log('Starting borough for properties.')
+            let properties = await Property.find({ 'borough': { $exists: false } })
             let dataLength = properties.length
-            console.log(dataLength)
+            console.log('Starting borough for properties for the data of ' + dataLength + ' entries.')
             for (let x = 0; x < properties.length; x++) {
                 let postCodeCheck = {
                     uri: 'https://api.postcodes.io/outcodes?lon=' + properties[x].longitude + '&lat=' + properties[x].latitude,
