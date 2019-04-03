@@ -55,7 +55,7 @@ class CrimeSeeder {
             console.log('Starting postcode for crime.')
             let crimes = await Crime.find({})
             let dataLength = crimes.length
-            console.log('Starting postcode for crime for the data of ' + dataLength + ' entries.')
+            console.log('Starting postcode & borough for crime for the data of ' + dataLength + ' entries.')
             for (let x = 0; x < crimes.length; x++) {
                 let postCodeCheck = {
                     uri: 'https://api.postcodes.io/outcodes?lon=' + crimes[x].longitude + '&lat=' + crimes[x].latitude,

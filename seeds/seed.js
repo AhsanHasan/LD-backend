@@ -12,7 +12,6 @@ class Seed {
         // await PropertySeeder.seed()
         // await CrimeSeeder.seed()
         // await CrimeSeeder.getPostcodesBorough()
-        // await PropertySeeder.getBorough()
         await CrimeSeeder.getBorough()
         console.log('Database seed completed')
         process.exit()

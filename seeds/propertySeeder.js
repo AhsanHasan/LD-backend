@@ -71,34 +71,5 @@ class PropertySeeder {
             ErrorHandler.sendError(error)
         }
     }
-
-    /**
-     * Insert borough in properties collection from the api
-     */
-    static async getBorough () {
-        try {
-            console.log('Starting borough for properties.')
-            let properties = await Property.find({ 'borough': { $exists: false } })
-            let dataLength = properties.length
-            console.log('Starting borough for properties for the data of ' + dataLength + ' entries.')
-            for (let x = 0; x < properties.length; x++) {
-                let postCodeCheck = {
-                    uri: 'https://api.postcodes.io/outcodes?lon=' + properties[x].longitude + '&lat=' + properties[x].latitude,
-                    json: true,
-                    method: 'GET'
-                }
-                await rp(postCodeCheck)
-                    .then(async (repos) => {
-                        console.log('Properties Borough: ' + ((x + 1) / dataLength) * 100)
-                        await Property.findOneAndUpdate({ _id: properties[x]._id }, { $set: { borough: repos.result[0].admin_district[0] } })
-                    })
-                    .catch(function (err) {
-                        console.log(err)
-                    })
-            }
-        } catch (error) {
-            ErrorHandler.sendError(error)
-        }
-    }
 }
 module.exports = { PropertySeeder }
