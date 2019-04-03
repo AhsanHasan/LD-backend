@@ -13,6 +13,7 @@ class Seed {
         // await CrimeSeeder.seed()
         // await CrimeSeeder.getPostcodesBorough()
         await CrimeSeeder.getBorough()
+        console.log('WORKING.')
         console.log('Database seed completed')
         process.exit()
     }
