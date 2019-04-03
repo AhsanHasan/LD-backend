@@ -15,6 +15,7 @@ router.get('/check-auth', AuthenticationController.checkLogin)
 router.get('/get-profile', AuthenticationController.getProfile)
 // Properties API
 router.get('/get-property-types', PropertyController.getPropertyTypes)
+router.get('/get-all-properties', PropertyController.getAllProperties)
 // Crime API
 router.get('/get-crime-categories', CrimeController.getCrimeCategories)
 router.get('/get-crime-months', CrimeController.getCrimeMonths)

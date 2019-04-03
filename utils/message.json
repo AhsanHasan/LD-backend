@@ -39,5 +39,9 @@
     "getAllCrimes":{
         "success":"Records found.",
         "invalid":"No Records found."
+    },
+    "getAllProperties":{
+        "success":"Records found.",
+        "invalid":"No Records found."
     }
 }

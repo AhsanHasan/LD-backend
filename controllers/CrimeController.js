@@ -102,7 +102,7 @@ class CrimeController {
                 results = await Crime.find({}, query)
             }
             if (results) {
-                return new Response(res, { crimes: results }, message.getCrimeCategories.success, true)
+                return new Response(res, { crimes: results }, message.getAllCrimes.success, true)
             } else {
                 return new Response(res, { crimes: {} }, message.getAllCrimes.invalid, false, 400)
             }
