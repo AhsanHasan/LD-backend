@@ -1,5 +1,5 @@
 {
-    "PORT": 3000,
+    "PORT": 80,
     "VERSION": "1.0.0",
     "MONGO_CONNECTION": "mongodb://root:root@127.0.0.1:27017/ldp",
     "SSH_TUNNEL": {
