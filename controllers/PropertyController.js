@@ -37,9 +37,9 @@ class PropertyController {
         try {
             let results = await Property.find({})
             if (results.length) {
-                return new Response(res, { crimes: results }, message.getAllProperties.success, true)
+                return new Response(res, { properties: results }, message.getAllProperties.success, true)
             } else {
-                return new Response(res, { crimes: {} }, message.getAllProperties.invalid, false, 400)
+                return new Response(res, { properties: [] }, message.getAllProperties.invalid, false, 400)
             }
         } catch (error) {
             ErrorHandler.sendError(res, error)
