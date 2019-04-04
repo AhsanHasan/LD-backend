@@ -36,7 +36,7 @@ class PropertyController {
     static async getAllProperties (req, res) {
         try {
             let results = await Property.find({})
-            if (results) {
+            if (results.length) {
                 return new Response(res, { crimes: results }, message.getAllProperties.success, true)
             } else {
                 return new Response(res, { crimes: {} }, message.getAllProperties.invalid, false, 400)
