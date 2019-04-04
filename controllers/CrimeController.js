@@ -83,53 +83,22 @@ class CrimeController {
         */
     static async getAllCrimes (req, res) {
         try {
+            let dataRequired = {}
             if (req.query.category) {
-                req.query.category = req.query.category.split(',')
+                dataRequired['category'] = { $in: req.query.category.split(',') }
             }
             if (req.query.month) {
-                req.query.month = req.query.month.split(',')
+                dataRequired['month'] = { $in: req.query.month.split(',') }
             }
             if (req.query.postCode) {
-                req.query.postCode = req.query.postCode.split(',')
+                dataRequired['postcode'] = { $in: req.query.postCode.split(',') }
             }
             if (req.query.borough) {
-                req.query.borough = req.query.borough.split(',')
+                dataRequired['borough'] = { $in: req.query.borough.split(',') }
             }
-            let results = []
             let query = 'category longitude latitude month postCode borough'
-            if (req.query.category && !req.query.month && !req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'category': { $in: req.query.category } }, query)
-            } else if (!req.query.category && req.query.month && !req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month } }, query)
-            } else if (!req.query.category && !req.query.month && req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'postCode': { $in: req.query.postCode } }, query)
-            } else if (!req.query.category && !req.query.month && !req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'borough': { $in: req.query.borough } }, query)
-            } else if (req.query.category && req.query.month && !req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'category': { $in: req.query.category } }, query)
-            } else if (!req.query.category && req.query.month && req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'postCode': { $in: req.query.postCode } }, query)
-            } else if (!req.query.category && req.query.month && !req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'borough': { $in: req.query.borough } }, query)
-            } else if (req.query.category && req.query.month && req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'category': { $in: req.query.category }, 'postCode': { $in: req.query.postCode } }, query)
-            } else if (req.query.category && req.query.month && !req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'category': { $in: req.query.category }, 'borough': { $in: req.query.borough } }, query)
-            } else if (!req.query.category && req.query.month && req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'postCode': { $in: req.query.postCode }, 'borough': { $in: req.query.borough } }, query)
-            } else if (req.query.category && req.query.month && req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'month': { $in: req.query.month }, 'category': { $in: req.query.category }, 'postCode': { $in: req.query.postCode }, 'borough': { $in: req.query.borough } }, query)
-            } else if (req.query.category && !req.query.month && req.query.postCode && !req.query.borough) {
-                results = await Crime.find({ 'category': { $in: req.query.category }, 'postCode': { $in: req.query.postCode } }, query)
-            } else if (req.query.category && !req.query.month && !req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'category': { $in: req.query.category }, 'borough': { $in: req.query.borough } }, query)
-            } else if (req.query.category && !req.query.month && req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'category': { $in: req.query.category }, 'postCode': { $in: req.query.postCode }, 'borough': { $in: req.query.borough } }, query)
-            } else if (!req.query.category && !req.query.month && req.query.postCode && req.query.borough) {
-                results = await Crime.find({ 'postCode': { $in: req.query.postCode }, 'borough': { $in: req.query.borough } }, query)
-            } else {
-                results = await Crime.find({}, query)
-            }
+            console.log(dataRequired)
+            let results = await Crime.find(dataRequired, query)
             if (results.length) {
                 return new Response(res, { crimes: results }, message.getAllCrimes.success, true)
             } else {
