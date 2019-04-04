@@ -99,7 +99,7 @@ class CrimeController {
             }
             let query = 'category longitude latitude month postCode borough'
             if (req.query.q) {
-                query = req.query.q.replace(',', ' ')
+                query = req.query.q.replace(/,/g, ' ')
             }
             let results = await Crime.find(dataRequired, query)
             if (results.length) {
