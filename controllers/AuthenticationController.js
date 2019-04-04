@@ -59,10 +59,10 @@ class AuthenticationController {
             let password = req.body.password
             let checkUser = await User.findOne({ email: email })
             if (!checkUser) {
-                return new Response(res, { token: '' }, message.login.invalidEmail, false, 400)
+                return new Response(res, { email: message.login.invalidEmail }, message.login.invalidEmail, false, 400)
             } else {
                 if (!bcrypt.compareSync(password, checkUser.password)) {
-                    return new Response(res, { token: '' }, message.login.invalidPassword, false, 400)
+                    return new Response(res, { password: message.login.invalidPassword }, message.login.invalidPassword, false, 400)
                 } else {
                     let token = AuthMiddleware.createJWT(checkUser)
                     await User.findOneAndUpdate({ email: email }, { $set: { authToken: token } })
