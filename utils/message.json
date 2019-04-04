@@ -36,6 +36,10 @@
         "success":"Crime postcodes found.",
         "invalid":"No crime postcodes found."
     },
+    "getCrimeBoroughs":{
+        "success":"Crime boroughs found.",
+        "invalid":"No crime boroughs found."
+    },
     "getAllCrimes":{
         "success":"Records found.",
         "invalid":"No Records found."

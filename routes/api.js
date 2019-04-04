@@ -20,6 +20,7 @@ router.get('/get-all-properties', PropertyController.getAllProperties)
 router.get('/get-crime-categories', CrimeController.getCrimeCategories)
 router.get('/get-crime-months', CrimeController.getCrimeMonths)
 router.get('/get-crime-postcodes', CrimeController.getCrimePostCodes)
+router.get('/get-crime-boroughs', CrimeController.getCrimeBoroughs)
 router.get('/get-all-crimes', CrimeController.getAllCrimes)
 
 module.exports = router

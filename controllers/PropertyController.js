@@ -29,13 +29,20 @@ class PropertyController {
 
     /**
      * API | GET
-     * Get all the properties records.
+     * Get all the properties records against propertyType / none.
+     * @example {
+        *      propertyType: String
+        * }
         * @param {*} req
         * @param {*} res
         */
     static async getAllProperties (req, res) {
         try {
-            let results = await Property.find({})
+            let dataRequired = {}
+            if (req.query.propertyType) {
+                dataRequired['property_type'] = { $in: req.query.propertyType.split(',') }
+            }
+            let results = await Property.find(dataRequired)
             if (results.length) {
                 return new Response(res, { properties: results }, message.getAllProperties.success, true)
             } else {
