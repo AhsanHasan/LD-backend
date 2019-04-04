@@ -71,12 +71,13 @@ class CrimeController {
 
     /**
      * API | GET
-     * Get all the Crime of records against a catagory / month / postcode / borough / any combination / none.
+     * Get all the Crime of records against a catagory / month / postcode / borough / any combination / none, with all or just required variables.
      * @example {
         *      category: String,
         *      month: String,
         *      postCode: String,
-        *      borough: String
+        *      borough: String,
+        *      q: String
         * }
         * @param {*} req
         * @param {*} res
@@ -97,7 +98,9 @@ class CrimeController {
                 dataRequired['borough'] = { $in: req.query.borough.split(',') }
             }
             let query = 'category longitude latitude month postCode borough'
-            console.log(dataRequired)
+            if (req.query.q) {
+                query = req.query.q.replace(',', ' ')
+            }
             let results = await Crime.find(dataRequired, query)
             if (results.length) {
                 return new Response(res, { crimes: results }, message.getAllCrimes.success, true)
