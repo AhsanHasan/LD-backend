@@ -24,6 +24,14 @@
         "success":"Property types found.",
         "invalid":"No property types found."
     },
+    "getPropertyPostCodes":{
+        "success":"Property postCodes found.",
+        "invalid":"No property postCodes found."
+    },
+    "getProprertyBoroughs":{
+        "success":"Property boroughs found.",
+        "invalid":"No property boroughs found."
+    },
     "getCrimeCategories":{
         "success":"Crime categories found.",
         "invalid":"No crime categories found."

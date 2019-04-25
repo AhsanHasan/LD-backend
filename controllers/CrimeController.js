@@ -98,6 +98,9 @@ class CrimeController {
         *      month: String,
         *      postCode: String,
         *      borough: String,
+        *      size: String,
+        *      pageLimit: String,
+        *      pageNumber: String,
         *      q: String
         * }
         * @param {*} req
@@ -122,9 +125,23 @@ class CrimeController {
             if (req.query.q) {
                 query = req.query.q.replace(/,/g, ' ')
             }
-            let results = await Crime.find(dataRequired, query)
+            let results = []
+            let pages = 1
+            let dataSize = 0
+            if (req.query.pageNumber && req.query.pageLimit) {
+                results = await Crime.find(dataRequired, query).sort({ x: 1 }).skip((parseInt(req.query.pageNumber) - 1) * parseInt(req.query.pageLimit)).limit(parseInt(req.query.pageLimit))
+                dataSize = await Crime.find(dataRequired, query).sort({ x: 1 }).count()
+                pages = Math.ceil(parseInt(dataSize) / parseInt(req.query.pageLimit))
+            } else {
+                results = await Crime.find(dataRequired, query).sort({ x: 1 })
+                dataSize = results.length
+            }
             if (results.length) {
-                return new Response(res, { crimes: results }, message.getAllCrimes.success, true)
+                if (req.query.pageNumber && req.query.pageLimit) {
+                    return new Response(res, { crimes: results, pageNumber: req.query.pageNumber, totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: req.query.pageLimit }, message.getAllCrimes.success, true)
+                } else {
+                    return new Response(res, { crimes: results, pageNumber: 1, totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: dataSize.toString() }, message.getAllCrimes.success, true)
+                }
             } else {
                 return new Response(res, { crimes: [] }, message.getAllCrimes.invalid, false, 400)
             }
