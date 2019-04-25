@@ -104,7 +104,7 @@ class PropertyController {
             let dataSize = 0
             if (req.query.pageNumber && req.query.pageLimit) {
                 results = await Property.find(dataRequired, query).sort({ _id: 1 }).skip((parseInt(req.query.pageLimit) - 1) * parseInt(req.query.pageLimit)).limit(parseInt(req.query.pageLimit))
-                dataSize = await Property.find(dataRequired, query).sort({ _id: 1 }).count()
+                dataSize = await Property.find(dataRequired, query).sort({ _id: 1 }).countDocuments()
                 pages = Math.ceil(parseInt(dataSize) / parseInt(req.query.pageLimit))
             } else {
                 results = await Property.find(dataRequired, query).sort({ _id: 1 })

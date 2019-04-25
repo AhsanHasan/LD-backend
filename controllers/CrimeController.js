@@ -130,7 +130,7 @@ class CrimeController {
             let dataSize = 0
             if (req.query.pageNumber && req.query.pageLimit) {
                 results = await Crime.find(dataRequired, query).sort({ _id: 1 }).skip((parseInt(req.query.pageNumber) - 1) * parseInt(req.query.pageLimit)).limit(parseInt(req.query.pageLimit))
-                dataSize = await Crime.find(dataRequired, query).sort({ _id: 1 }).count()
+                dataSize = await Crime.find(dataRequired, query).sort({ _id: 1 }).countDocuments()
                 pages = Math.ceil(parseInt(dataSize) / parseInt(req.query.pageLimit))
             } else {
                 results = await Crime.find(dataRequired, query).sort({ _id: 1 })
