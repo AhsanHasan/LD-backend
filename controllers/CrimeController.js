@@ -129,18 +129,18 @@ class CrimeController {
             let pages = 1
             let dataSize = 0
             if (req.query.pageNumber && req.query.pageLimit) {
-                results = await Crime.find(dataRequired, query).sort({ x: 1 }).skip((parseInt(req.query.pageNumber) - 1) * parseInt(req.query.pageLimit)).limit(parseInt(req.query.pageLimit))
-                dataSize = await Crime.find(dataRequired, query).sort({ x: 1 }).count()
+                results = await Crime.find(dataRequired, query).sort({ _id: 1 }).skip((parseInt(req.query.pageNumber) - 1) * parseInt(req.query.pageLimit)).limit(parseInt(req.query.pageLimit))
+                dataSize = await Crime.find(dataRequired, query).sort({ _id: 1 }).count()
                 pages = Math.ceil(parseInt(dataSize) / parseInt(req.query.pageLimit))
             } else {
-                results = await Crime.find(dataRequired, query).sort({ x: 1 })
+                results = await Crime.find(dataRequired, query).sort({ _id: 1 })
                 dataSize = results.length
             }
             if (results.length) {
                 if (req.query.pageNumber && req.query.pageLimit) {
                     return new Response(res, { crimes: results, pageNumber: req.query.pageNumber, totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: req.query.pageLimit }, message.getAllCrimes.success, true)
                 } else {
-                    return new Response(res, { crimes: results, pageNumber: 1, totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: dataSize.toString() }, message.getAllCrimes.success, true)
+                    return new Response(res, { crimes: results, pageNumber: '1', totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: dataSize.toString() }, message.getAllCrimes.success, true)
                 }
             } else {
                 return new Response(res, { crimes: [] }, message.getAllCrimes.invalid, false, 400)
