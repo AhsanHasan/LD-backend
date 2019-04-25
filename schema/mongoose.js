@@ -11,16 +11,20 @@ const mongoConnection = process.env.MONGO_CONNECTION || config.MONGO_CONNECTION
 
 var ssh = config.SSH_TUNNEL
 const connect = () => {
-    tunnel(ssh, function (error, server) {
-        if (error) {
-            console.log('SSH connection error: ' + error)
-        }
+    if (process.env.NODE_ENV === 'production') {
         mongoose.connect(mongoConnection, { useNewUrlParser: true })
-        var db = mongoose.connection
-        db.on('error', console.error.bind(console, 'DB connection error:'))
-        db.once('open', function () {
-            console.log('DB connection successful')
+    } else {
+        tunnel(ssh, function (error, server) {
+            if (error) {
+                console.log('SSH connection error: ' + error)
+            }
+            mongoose.connect(mongoConnection, { useNewUrlParser: true })
+            var db = mongoose.connection
+            db.on('error', console.error.bind(console, 'DB connection error:'))
+            db.once('open', function () {
+                console.log('DB connection successful')
+            })
         })
-    })
+    }
 }
 module.exports = { mongoose, connect }
