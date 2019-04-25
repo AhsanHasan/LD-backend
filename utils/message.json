@@ -32,6 +32,14 @@
         "success":"Property boroughs found.",
         "invalid":"No property boroughs found."
     },
+    "getProprertyBedrooms":{
+        "success":"Property max and min bedroom count found.",
+        "invalid":"No property max and min bedroom count found."
+    },
+    "getProprertyPrices":{
+        "success":"Property max and min prices found.",
+        "invalid":"No property max and min prices found."
+    },
     "getCrimeCategories":{
         "success":"Crime categories found.",
         "invalid":"No crime categories found."

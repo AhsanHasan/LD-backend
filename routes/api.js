@@ -16,6 +16,8 @@ router.get('/get-profile', AuthenticationController.getProfile)
 // Properties API
 router.get('/get-property-types', PropertyController.getPropertyTypes)
 router.get('/get-property-postcodes', PropertyController.getPropertyPostCodes)
+router.get('/get-property-bedrooms', PropertyController.getProprertyBedrooms)
+router.get('/get-property-prices', PropertyController.getProprertyPrices)
 router.get('/get-property-boroughs', PropertyController.getProprertyBoroughs)
 router.get('/get-all-properties', PropertyController.getAllProperties)
 // Crime API

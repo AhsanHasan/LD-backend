@@ -71,13 +71,71 @@ class PropertyController {
 
     /**
      * API | GET
+     * Get minimum and maximum bedroom number in Property.
+     * @example {
+        * }
+        * @param {*} req
+        * @param {*} res
+        */
+    static async getProprertyBedrooms (req, res) {
+        try {
+            let minMaxBedrooms = await Property.aggregate([
+                { '$group': {
+                    '_id': null,
+                    'max': { '$max': '$bedroom_number' },
+                    'min': { '$min': '$bedroom_number' }
+                } }
+            ])
+            if (minMaxBedrooms.length) {
+                return new Response(res, { Bedrooms: minMaxBedrooms }, message.getProprertyBedrooms.success, true)
+            } else {
+                return new Response(res, { Bedrooms: [] }, message.getProprertyBedrooms.invalid, false, 400)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
+
+    /**
+     * API | GET
+     * Get minimum and maximum prices of Property.
+     * @example {
+        * }
+        * @param {*} req
+        * @param {*} res
+        */
+    static async getProprertyPrices (req, res) {
+        try {
+            let minMaxPrice = await Property.aggregate([
+                { '$group': {
+                    '_id': null,
+                    'max': { '$max': '$price' },
+                    'min': { '$min': '$price' }
+                } }
+            ])
+            if (minMaxPrice.length) {
+                return new Response(res, { prices: minMaxPrice }, message.getProprertyPrices.success, true)
+            } else {
+                return new Response(res, { prices: [] }, message.getProprertyPrices.invalid, false, 400)
+            }
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
+
+    /**
+     * API | GET
      * Get all the properties records against propertyType / none.
      * @example {
         *      propertyType: String,
         *      postCode: String,
         *      borough: String,
         *      pageLimit: String,
-        *      pageNumber: String
+        *      pageNumber: String,
+        *      minBedrooms: String,
+        *      maxBedrooms: String,
+        *      minPrice: String,
+        *      maxPrice: String,
         *      q: String
         * }
         * @param {*} req
@@ -94,6 +152,12 @@ class PropertyController {
             }
             if (req.query.borough) {
                 dataRequired['borough'] = { $in: req.query.borough.split(',') }
+            }
+            if (req.query.minBedrooms || req.query.maxBedrooms) {
+                dataRequired['bedroom_number'] = { $gte: req.query.minBedrooms, $lte: req.query.maxBedrooms }
+            }
+            if (req.query.minPrice || req.query.maxPrice) {
+                dataRequired['price'] = { $gte: req.query.minPrice, $lte: req.query.maxPrice }
             }
             let query = 'title price construction_year car_spaces property_type bathroom_number bedroom_number longitude latitude month postCode borough'
             if (req.query.q) {
