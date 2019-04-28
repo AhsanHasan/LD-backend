@@ -98,7 +98,6 @@ class CrimeController {
         *      month: String,
         *      postCode: String,
         *      borough: String,
-        *      size: String,
         *      pageLimit: String,
         *      pageNumber: String,
         *      q: String
@@ -108,43 +107,54 @@ class CrimeController {
         */
     static async getAllCrimes (req, res) {
         try {
-            let dataRequired = {}
-            if (req.query.category) {
-                dataRequired['category'] = { $in: req.query.category.split(',') }
+            let category = req.query.category
+            let month = req.query.month
+            let postCode = req.query.postcode
+            let borough = req.query.borough
+            let pageLimit = req.query.pageLimit
+            let pageNumber = req.query.pageNumber
+            let pipeline = []
+            if (category !== '' && category != null) {
+                pipeline.push({
+                    $match: { category: category }
+                })
             }
-            if (req.query.month) {
-                dataRequired['month'] = { $in: req.query.month.split(',') }
+            if (month !== '' && month != null) {
+                pipeline.push({
+                    $match: { month: month }
+                })
             }
-            if (req.query.postCode) {
-                dataRequired['postCode'] = { $in: req.query.postCode.split(',') }
+            if (postCode !== '' && postCode != null) {
+                pipeline.push({
+                    $match: { postCode: postCode }
+                })
             }
-            if (req.query.borough) {
-                dataRequired['borough'] = { $in: req.query.borough.split(',') }
+            if (borough !== '' && borough != null) {
+                pipeline.push({
+                    $match: { borough: borough }
+                })
             }
-            let query = 'category longitude latitude month postCode borough'
-            if (req.query.q) {
-                query = req.query.q.replace(/,/g, ' ')
+            let count = await Crime.aggregate(pipeline.concat([
+                { $group: { _id: null, count: { $sum: 1 } } }
+            ]))
+            if (count[0]) { count = count[0].count } else { count = 0 }
+            if (
+                pageLimit !== '' && pageLimit != null &&
+                pageNumber !== '' && pageNumber != null
+            ) {
+                pipeline = pipeline.concat([
+                    { $skip: pageLimit * pageNumber - 1 },
+                    { $limit: parseInt(pageLimit) }
+                ])
             }
-            let results = []
-            let pages = 1
-            let dataSize = 0
-            if (req.query.pageNumber && req.query.pageLimit) {
-                results = await Crime.find(dataRequired, query).sort({ _id: 1 }).skip((parseInt(req.query.pageNumber) - 1) * parseInt(req.query.pageLimit)).limit(parseInt(req.query.pageLimit))
-                dataSize = await Crime.find(dataRequired, query).sort({ _id: 1 }).countDocuments()
-                pages = Math.ceil(parseInt(dataSize) / parseInt(req.query.pageLimit))
-            } else {
-                results = await Crime.find(dataRequired, query).sort({ _id: 1 })
-                dataSize = results.length
-            }
-            if (results.length) {
-                if (req.query.pageNumber && req.query.pageLimit) {
-                    return new Response(res, { crimes: results, pageNumber: req.query.pageNumber, totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: req.query.pageLimit }, message.getAllCrimes.success, true)
-                } else {
-                    return new Response(res, { crimes: results, pageNumber: '1', totalPages: pages.toString(), numberOfRecords: dataSize.toString(), pageLimit: dataSize.toString() }, message.getAllCrimes.success, true)
-                }
-            } else {
-                return new Response(res, { crimes: [] }, message.getAllCrimes.invalid, false, 400)
-            }
+            let data = await Crime.aggregate(pipeline)
+            return new Response(res, {
+                crimes: data,
+                pageNumber: pageNumber,
+                totalPages: count / pageLimit,
+                numberOfRecords: count,
+                pageLimit: pageLimit
+            })
         } catch (error) {
             ErrorHandler.sendError(res, error)
         }
@@ -165,9 +175,9 @@ class CrimeController {
     static async getBarchart (req, res) {
         try {
             let category = req.query.category
-            let month = req.query.category
-            let postCode = req.query.category
-            let borough = req.query.category
+            let month = req.query.month
+            let postCode = req.query.postcode
+            let borough = req.query.borough
             let pipeline = []
             if (category !== '' && category != null) {
                 pipeline.push({
@@ -186,7 +196,7 @@ class CrimeController {
             }
             if (borough !== '' && borough != null) {
                 pipeline.push({
-                    $match: { category: category }
+                    $match: { borough: borough }
                 })
             }
             let chartData = await Crime.aggregate(pipeline.concat([

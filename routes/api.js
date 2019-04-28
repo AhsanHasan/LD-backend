@@ -20,6 +20,7 @@ router.get('/property/bedrooms', PropertyController.getProprertyBedrooms)
 router.get('/property/prices', PropertyController.getProprertyPrices)
 router.get('/property/boroughs', PropertyController.getProprertyBoroughs)
 router.get('/property/all', PropertyController.getAllProperties)
+router.get('/property/bar-chart', PropertyController.getBarchart)
 // Crime API
 router.get('/get-crime-categories', CrimeController.getCrimeCategories)
 router.get('/get-crime-months', CrimeController.getCrimeMonths)
