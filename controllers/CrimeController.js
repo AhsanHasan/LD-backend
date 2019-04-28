@@ -149,6 +149,65 @@ class CrimeController {
             ErrorHandler.sendError(res, error)
         }
     }
+
+    /**
+     * API | GET
+     * Get barchart formatted data for all crimes by category, month, postcode and borough
+     * @example {
+     *      category: String,
+     *      month: String,
+     *      postCode: String,
+     *      borough: String
+     * }
+     * @param {*} req
+     * @param {*} res
+     */
+    static async getBarchart (req, res) {
+        try {
+            let category = req.query.category
+            let month = req.query.category
+            let postCode = req.query.category
+            let borough = req.query.category
+            let pipeline = []
+            if (category !== '' && category != null) {
+                pipeline.push({
+                    $match: { category: category }
+                })
+            }
+            if (month !== '' && month != null) {
+                pipeline.push({
+                    $match: { month: month }
+                })
+            }
+            if (postCode !== '' && postCode != null) {
+                pipeline.push({
+                    $match: { postCode: postCode }
+                })
+            }
+            if (borough !== '' && borough != null) {
+                pipeline.push({
+                    $match: { category: category }
+                })
+            }
+            let chartData = await Crime.aggregate(pipeline.concat([
+                {
+                    $group: {
+                        _id: '$borough',
+                        count: { $sum: 1 }
+                    }
+                }
+            ]))
+            chartData = chartData.map(x => {
+                return {
+                    x: x._id,
+                    y: x.count
+                }
+            })
+            return new Response(res, { chartData: chartData })
+        } catch (error) {
+            ErrorHandler.sendError(res, error)
+        }
+    }
 }
 
 module.exports = { CrimeController }
